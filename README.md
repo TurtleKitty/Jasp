@@ -136,7 +136,8 @@ Here is a simple program to calculate the factorial of 100 and display it:
 
 ```
 
-$ ./index.js fact.jasp 
+$ ./index.js fact.jasp  
+
 9.33262154439441e+157
 
 
