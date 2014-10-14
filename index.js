@@ -1,5 +1,69 @@
 #!/usr/bin/env node
 
+/*
+
+JASP syntax:
+
+    // symbol definition
+
+    {
+        operator: "define",
+        name: "string",
+        value: <expr>
+    }
+
+    // mutation
+
+    {
+        operator: "set!",
+        name: "string",
+        value: <expr>
+    }
+
+    // reference
+
+    if x is defined in the env, "$x" returns the value (whereas "x" is just a string).
+
+    // branching
+
+    {
+        operator: "if",
+        predicate: <expr> ,
+        then: <expr>,
+        else: <expr>
+    }
+
+    // quotation
+
+    {
+        operator: "quote",
+        value: <expr>
+    }
+
+    // abstraction
+
+    {
+        operator: "lambda",
+        arguments: [ "string", "string", ... ]
+        body: <expr> (can be an array, interpreted as a sequence)
+    }
+
+    // function application
+
+    {
+        operator: "foo",
+        arguments: [ 1, 2, 3 ]
+    }
+
+    // reflection
+
+    {
+        operator: "eval",
+        code: <quoted-expr>
+    }
+
+*/
+
 var
     fs = require("fs"),
     clog = console.log,
@@ -108,13 +172,13 @@ function jasp_eval (code, env) {
     }
 
     if (code.operator) {
-//clog("HAS OP");
         var ctable = {
             "define":  jasp_define,
-            "set":     jasp_set,
+            "set!":    jasp_set,
             "if":      jasp_if,
             "quote":   jasp_quote,
-            "lambda":  jasp_lambda
+            "lambda":  jasp_lambda,
+            "eval":    function (c, env) { return jasp_eval(jasp_eval(c.code, env), env); }
         };
 
         var op = ctable[code.operator];
@@ -125,18 +189,14 @@ function jasp_eval (code, env) {
 
         var fun = env.lookup(code.operator);
 
-//cerr({ FUN: fun });
-
         return fun.apply(null, jasp_seq(code["arguments"], env) );
     }
     else {
         if (Array.isArray(code)) {
-//clog("IS SEQ");
             return jasp_seq(code, env).pop();
         }
 
         if ( (typeof code === "string") && code[0] === "$") {
-//clog("IS REF");
             return env.lookup(code.slice(1));
         }
 
@@ -164,7 +224,7 @@ function jasp_if (code, env) {
 }
 
 function jasp_quote(code, env) {
-    return code["arguments"][0];
+    return code.value;
 }
 
 function jasp_seq(code, env) {
@@ -179,7 +239,6 @@ function jasp_lambda (code, env) {
     function jasp_apply (_, args) {
         var ext = { };
 
-//cerr([ "JASP-APPLY", code, args ]);
         code["arguments"].forEach(
             function (name, idx) {
                 ext[name] = args[idx];
@@ -188,7 +247,6 @@ function jasp_lambda (code, env) {
 
         var noob = env.extend(ext);
 
-//cerr([ "NOOB-LOOKUP", code["arguments"][0], noob.lookup(code["arguments"][0]) ]);
         return jasp_eval(code.body, noob);
     }
 
@@ -201,80 +259,8 @@ function jasp_lambda (code, env) {
 }
 
 
-var jfn = jasp_lambda(
-    {
-        operator: "lambda",
-        "arguments": [ "x" ],
-        "body": {
-            operator: "*",
-            "arguments": [ "$x", "$x" ]
-        }
-    },
-    genv
-);
-
-// clog( jfn.apply(4) );
-
-/*
-
-jasp_eval(
-    {
-        operator: "display",
-        arguments: [
-            [
-                { operator: "define", name: "x", value: 2 },
-                { operator: "define", name: "y", value: 3 },
-                { operator: "display", arguments: [ "$x" ] },
-                { operator: "display", arguments: [ "$y" ] },
-                { operator: "set", name: "x", value: 3 },
-                { operator: "if", predicate: { operator: "=", arguments: [ "$x", "$y" ] }, then: "Yay!", else: "Boo!" }
-            ]
-        ]
-    },
-    genv
-);
-
-*/
-
+// Ok, go!!!
 
 jasp_eval(prog, genv);
 
 
-/*
-
-    {
-        operator: "define",
-        name: "foo",
-        value: 1
-    },
-
-    {
-        operator: "set!",
-        name: "foo",
-        value: 2
-    },
-
-    {
-        operator: "if",
-        predicate: ... ,
-        then: ... ,
-        else: ... ,
-    },
-
-    {
-        operator: "quote",
-        arguments: [ ... ]
-    },
-
-    {
-        operator: "lambda",
-        arguments: [ "x", "y" ]
-        body: ...
-    },
-
-    {
-        operator: "foo",
-        arguments: [ 1, 2, 3 ]
-    },
-
-*/
