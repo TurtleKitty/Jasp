@@ -1,0 +1,15 @@
+{
+    "name": "jasp",
+    "version": "0.0.1",
+    "description": "The JASP programming language",
+    "author": "TurtleKitty <kamekoneko@anwu.org>",
+    "license": "BSD",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/"
+    },
+    "dependencies": {
+        "yargs": "1.3.2"
+    }
+}

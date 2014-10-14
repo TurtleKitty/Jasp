@@ -1,0 +1,43 @@
+
+[
+
+    {
+        "operator": "define",
+        "name": "fact",
+        "value": {
+            "operator": "lambda",
+            "arguments": [ "n" ],
+            "body": {
+                "operator": "if",
+                "predicate": { "operator": "=", "arguments": [ "$n", 0 ] },
+                "then": 1,
+                "else": {
+                    "operator": "*",
+                    "arguments": [
+                        "$n",
+                        {
+                            "operator": "fact",
+                            "arguments": [
+                                {
+                                    "operator": "-",
+                                    "arguments": [ "$n", 1 ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    },
+
+    {
+        "operator": "display",
+        "arguments": [
+            {
+                "operator": "fact",
+                "arguments": [ 100 ]
+            }
+        ]
+    }
+
+]
