@@ -2,41 +2,51 @@ Jasp
 ====
 
 Everyone knows that object-oriented programming is superior to the list-oriented programming
-of the lisp family.  Everyone knows that JSON is superior to S-Expressions.  Introducing JASP,
-a language that lets you program a Scheme-like dialect using nothing but JSON!
+of the Lisp familyr, and that JSON is superior to S-Expressions.  Introducing JASP,
+a language that lets you program in a Scheme-like dialect using nothing but JSON!
 
-** JASP syntax **
+**JASP syntax**
 
 ```javascript
 
     // symbol definition
 
     {
-        operator: "define",
-        name: "string",
-        value: <expr>
+        "operator": "define",
+        "name": <string>,
+        "value": <expr>
     }
 
     // mutation
 
     {
-        operator: "set!",
-        name: "string",
-        value: <expr>
+        "operator": "set!",
+        "name": <string>,
+        "value": <expr>
     }
 
     // reference
 
-    if x is defined in the env, "$x" returns the value (whereas "x" is just a string).
+    if "x" is defined in the currnet environment, "$x" returns the value (whereas "x" is just a string).
 
     // branching
 
     {
-        operator: "if",
-        predicate: <expr> ,
-        then: <expr>,
-        else: <expr>
+        "operator:" "if",
+        "predicate": <expr> ,
+        "then": <expr>,
+        "else": <expr>
     }
+
+    // sequencing
+
+    Jasp interprets naked arrays as sequences of instructions, like (begin) in Scheme.
+
+    [
+        { "operator": "set!", "name": "x", "value": 2 },
+        { "operator": "display", "arguments" [ "$x" ] },
+        $x
+    ]
 
     // quotation
 
@@ -69,7 +79,7 @@ a language that lets you program a Scheme-like dialect using nothing but JSON!
 
 ```
 
-Here is a simply program to calculate the factorial of 100 and display it:
+Here is a simple program to calculate the factorial of 100 and display it:
 
 
 ```json
