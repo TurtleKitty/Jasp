@@ -27,11 +27,13 @@ a language that lets you program in a Scheme-like dialect using nothing but JSON
 
     // reference
 
-    if "x" is defined in the current environment,
-    "$x" returns the value,
-    whereas "x" is just a string
+    /* 
+        if "x" is defined in the current environment,
+        "$x" returns the value,
+        whereas "x" is just a string
 
-    The dollar sign is not necessary if the referenced symbol is in the operator position.
+        The dollar sign is not necessary if the referenced symbol is in the operator position.
+    */
 
     // branching
 
@@ -44,12 +46,12 @@ a language that lets you program in a Scheme-like dialect using nothing but JSON
 
     // sequencing
 
-    Jasp interprets naked arrays as sequences of instructions, like (begin) in Scheme.
+    // Jasp interprets naked arrays as sequences of instructions, like (begin) in Scheme.
 
     [
         { "operator": "set!", "name": "x", "value": 2 },
         { "operator": "display", "arguments" [ "$x" ] },
-        $x
+        "$x" // returns the value of "x" from the sequence
     ]
 
     // quotation
@@ -64,7 +66,7 @@ a language that lets you program in a Scheme-like dialect using nothing but JSON
     {
         "operator": "lambda",
         "arguments": [ "string", "string", ... ]
-        "body": <expr> (can be an array, interpreted as a sequence)
+        "body": <expr> // (can be an array, interpreted as a sequence)
     }
 
     // function application
