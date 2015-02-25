@@ -50,7 +50,7 @@ a language that lets you program in a Scheme-like dialect using nothing but JSON
 
     [
         { "operator": "set!", "name": "x", "value": 2 },
-        { "operator": "display", "arguments" [ "$x" ] },
+        { "operator": "display", "arguments": [ "$x" ] },
         "$x" // returns the value of "x" from the sequence
     ]
 
